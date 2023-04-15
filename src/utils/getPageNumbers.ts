@@ -8,8 +8,6 @@ const getPageNumbers = (numberOfPosts: number) => {
     pageNumbers.push(i);
   }
 
-  console.log({ pageNumbers });
-
   return pageNumbers;
 };
 
