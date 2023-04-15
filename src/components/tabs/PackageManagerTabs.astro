@@ -1,0 +1,19 @@
+---
+import Tabs from "./Tabs";
+---
+
+<Tabs client:visible sharedStore="package-managers">
+  <Fragment slot="tab.js">JavaScript</Fragment>
+  <Fragment slot="tab.go">Go</Fragment>
+  <Fragment slot="tab.python">Python</Fragment>
+
+  <Fragment slot="panel.js">
+    <slot name="js" />
+  </Fragment>
+  <Fragment slot="panel.go">
+    <slot name="go" />
+  </Fragment>
+  <Fragment slot="panel.python">
+    <slot name="python" />
+  </Fragment>
+</Tabs>

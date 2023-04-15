@@ -1,0 +1,157 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root,
+  html[data-theme="light"] {
+    --color-fill: 239, 239, 239;
+    --color-text-base: 43, 43, 43;
+    --color-accent: 255, 165, 0;
+    --color-card: 189, 189, 189;
+    --color-card-muted: 229, 229, 229;
+    --color-border: 92, 92, 92;
+  }
+  html[data-theme="dark"] {
+    --color-fill: 30, 41, 59;
+    --color-text-base: 250, 233, 255;
+    --color-accent: 89, 142, 253;
+    --color-card: 71, 85, 105;
+    --color-card-muted: 51, 65, 85;
+    --color-border: 148, 163, 184;
+  }
+  #sun-svg,
+  html[data-theme="dark"] #moon-svg {
+    display: none;
+  }
+  #moon-svg,
+  html[data-theme="dark"] #sun-svg {
+    display: block;
+  }
+  body {
+    @apply flex min-h-screen flex-col bg-skin-fill font-mono text-skin-base 
+    selection:bg-skin-accent selection:bg-opacity-70 selection:text-skin-inverted;
+  }
+  section,
+  footer {
+    @apply mx-auto max-w-3xl px-4;
+  }
+  a {
+    @apply outline-2 outline-offset-1 outline-skin-fill 
+    focus-visible:no-underline focus-visible:outline-dashed;
+  }
+  svg {
+    @apply inline-block h-6 w-6 fill-skin-base group-hover:fill-skin-accent;
+  }
+  svg.icon-tabler {
+    @apply inline-block h-6 w-6 scale-125 fill-transparent 
+    stroke-current stroke-2 opacity-90 group-hover:fill-transparent 
+    sm:scale-110;
+  }
+  .prose {
+    @apply prose-headings:!mb-3 prose-headings:!text-skin-base 
+    prose-h3:italic prose-p:!text-skin-base 
+    prose-a:!text-skin-base prose-a:!decoration-dashed prose-a:underline-offset-8
+    hover:prose-a:text-skin-accent prose-blockquote:!border-l-skin-accent
+    prose-blockquote:border-opacity-50 prose-blockquote:opacity-80
+    prose-figcaption:!text-skin-base prose-figcaption:opacity-70
+    prose-strong:!text-skin-base
+
+    
+    prose-code:rounded prose-code:bg-skin-card 
+    prose-code:bg-opacity-75 prose-code:p-1 prose-code:!text-skin-base 
+    prose-code:before:!content-[''] prose-code:after:!content-['']
+    prose-pre:!text-skin-base prose-ol:!text-skin-base 
+    prose-ul:overflow-x-clip prose-ul:!text-skin-base prose-li:marker:!text-skin-accent
+    prose-table:text-skin-base prose-th:border
+    prose-th:border-skin-line prose-td:border 
+    prose-td:border-skin-line prose-img:mx-auto 
+    prose-img:!mt-2 prose-img:border-2 
+    prose-img:border-skin-line prose-hr:!border-skin-line;
+  }
+  .prose a {
+    @apply hover:!text-skin-accent;
+  }
+  .prose thead th:first-child,
+  tbody td:first-child,
+  tfoot td:first-child {
+    padding-left: 0.5714286em;
+  }
+  .prose button[role="tab"] {
+    background-color: rgba(var(--color-accent));
+    flex: 1;
+    justify-content: center;
+    white-space: nowrap;
+    border-radius: 0;
+    cursor: pointer;
+    padding: 0.6rem 1rem;
+    color: var(--color-text-base);
+    border-bottom: 4px solid transparent;
+    margin-bottom: -4px;
+    background-color: transparent;
+    text-decoration: none;
+    @apply -mb-1 flex-1 cursor-pointer justify-center whitespace-nowrap bg-skin-accent py-2 px-4 text-skin-base;
+  }
+  .prose div.tablistContainer {
+    @apply -mb-5;
+  }
+  .prose div[role="tabpanel"] {
+    @apply mt-0;
+  }
+  .prose button[aria-selected="true"] {
+    text-decoration: underline 2px solid rgba(var(--color-accent));
+    text-underline-offset: 3px;
+  }
+  .prose div[role="tablist"] > span {
+    @apply absolute left-0 -bottom-1.5 h-1 origin-left bg-skin-accent bg-opacity-100;
+  }
+  .prose aside.aside.info {
+    @apply bg-skin-accent p-5 border-l-skin-accent border-l-4 bg-opacity-50
+  }
+  .prose h2#table-of-contents {
+    @apply mb-2;
+  }
+  .prose details {
+    @apply inline-block cursor-pointer select-none text-skin-base;
+  }
+  .prose summary {
+    @apply focus-outline;
+  }
+  .prose h2#table-of-contents + p {
+    @apply hidden;
+  }
+
+  /* ===== scrollbar ===== */
+  html {
+    overflow-y: scroll;
+  }
+
+  /* width */
+  ::-webkit-scrollbar {
+    @apply w-3;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    @apply bg-skin-fill;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    @apply bg-skin-card;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-skin-card-muted;
+  }
+}
+
+@layer components {
+  .display-none {
+    @apply hidden;
+  }
+  .focus-outline {
+    @apply outline-2 outline-offset-1 outline-skin-fill focus-visible:no-underline focus-visible:outline-dashed;
+  }
+}

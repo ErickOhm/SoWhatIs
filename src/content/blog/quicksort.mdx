@@ -1,0 +1,417 @@
+---
+pubDatetime: 2023-04-15T21:43:57.875Z
+title: Quicksort
+featured: true
+draft: false
+tags:
+  - algorithms
+  - sorts
+ogImage: ""
+description: What is quicksort, how does it work and how can you implement it?
+---
+
+import PackageManagerTabs from '../../components/tabs/PackageManagerTabs.astro'
+import Tip from '../../components/Tip'
+
+Quick sort is an [in-place sorting algorithm](https://en.wikipedia.org/wiki/In-place_algorithm), meaning it directly transforms the original array and does not need to make copies of it which is good for performance.
+It uses [recursion](https://sowhat.is/recursion) to break down the array into smaller sub-arrays that get sorted; this makes it fall into the [divide-and-conquer](https://en.wikipedia.org/wiki/Divide-and-conquer_algorithm) category of algorithms. Each sub-array is a part of the original array; sorting them all will eventually lead to a complete solution.
+
+<PackageManagerTabs>
+  <Fragment slot="js">
+  ```js
+  let array = [89,60,23,99,10,52,5]
+  QuickSort(array, 0, array.length - 1)
+
+  // output:
+  // [5 10 23 52 60 89 99]
+  ```
+  </Fragment>
+  <Fragment slot="go">
+  ```go
+  var array = []int{89,60,23,99,10,52,5}
+  QuickSort(array,0,len(array)-1)
+
+  // output:
+  // [5 10 23 52 60 89 99]
+  ```
+  </Fragment>
+  <Fragment slot="python">
+  ```python
+  array = [89,60,23,99,10,52,5]
+  QuickSort(array, 0, len(array) - 1)
+
+  # output:
+  # [5 10 23 52 60 89 99]
+  ```
+  </Fragment>
+</PackageManagerTabs>
+## How it works
+
+The exact implementation of the Quick Sort algorithm will be different depending on the variation of the algorithm we choose to use. However, all the variations will have the same three main elements:
+
+- Pivot
+- Partition
+- Recursion
+
+In this article, we will implement a variation known as the [Hoare Partition Scheme](https://en.wikipedia.org/wiki/Quicksort#Hoare_partition_scheme).
+
+### Pivot
+
+**A pivot is a value inside of the array used to divide it into smaller sub-arrays**; It separates the array or sub-array in two parts, elements less than the pivot and elements greater than the pivot.
+
+Choosing the pivot is essential and can directly impact the algorithm's performance. You could pick the pivot as either the leftmost or the rightmost value on the array; however, this can degrade the algorithm's performance to the worst-case scenario in already sorted arrays as you would be picking either the lowest or highest value on the array and as such there would not be a good separation of elements.
+To fix this, we can choose the pivot by picking a random index in the array. Another option is to select the median of the array's first, middle, and last elements. This method aims to balance the partition while avoiding the worst-case scenario of selecting the smallest or largest element as the pivot.
+
+### Partition
+
+The partition is where most of the work happens. While the implementation can vary, the basic idea remains the same.
+**Reorder the elements of the array such that all the values lower than the pivot are to the left and the values higher go to the right of the pivot**; elements of equal value can go either way. Finally, return an index to be used as a pivot on the next function call.
+
+### Recursion
+
+**The Quick Sort function is called again for each sub-array created by the division of all values before the pivot and all values after the pivot**. Eventually, no more sub-arrays are left, and the function returns, leaving the final order of the array ready to be used.
+
+## Implementation
+
+### QickSort Function
+
+Our quick sort function is the entry point and takes in three arguments: the array of integers to be sorted and two integers that will be the start and end indexes of the array or sub-array.
+
+We call the partition function that returns an index that is used as our pivot. Then we call the QuickSort function two times, dividing the array into two sub-arrays, one with the values between `low` and `pivot` and the other with the values after `pivot` and up to `high.` In our first call to Quicksort these values are the start and end of the array.
+
+Since we are using recursion here, we **must** have an exit condition. In this case, every time we call `QuickSort`, we pass two integers that determine the start and end of the sub-arrays within the original array. If the values passed are the same, it tells us that the sub-array has only one element in it, and as such, there is nothing left to sort, so we do nothing and exit out of the function.
+
+<PackageManagerTabs>
+  <Fragment slot="js">
+  ```js
+  function QuickSort(array, low, high) {
+    if(low < high) {
+      let pivot = partition(array, low, high)
+
+      QuickSort(array, low, pivot)
+      QuickSort(array, pivot + 1, high)
+    }
+  }
+  ```
+  </Fragment>
+  <Fragment slot="go">
+  ```go
+  func QuickSort(array []int, low, high int) {
+    if low < high {
+      pivot := partition(array,low,high)
+
+      QuickSort(array,low,pivot)
+      QuickSort(array,pivot+1,high)
+    }
+  }
+  ```
+  </Fragment>
+  <Fragment slot="python">
+  ```python
+  def QuickSort(array, low, high):
+    if low < high:
+        pivot = partition(array, low, high)
+        
+        QuickSort(array, low, pivot)
+        QuickSort(array, pivot + 1, high)
+  ```
+  </Fragment>
+</PackageManagerTabs>
+
+
+### The Partition
+
+The partition function takes the same three values as the `QuickSort` function, an array of integers, a low value, and a high value. A pivot is then chosen based on requirements and preferences. Here we will select the first element in the array for the sake of simplicity.
+
+<Tip type="info">
+**Note:** The start and end of the array are denoted by the low and high values being passed and not the array's length.
+</Tip>
+
+<PackageManagerTabs>
+  <Fragment slot="js">
+  ```js
+  function partition(array, low, high) {
+    let pivot = array[low]
+
+    // ...
+  }
+  ```
+  </Fragment>
+  <Fragment slot="go">
+  ```go
+  func partition(array []int, low, high int){
+    pivot := array[low]
+
+    // ...
+  }
+  ```
+  </Fragment>
+  <Fragment slot="python">
+  ```python
+  def partition(array, low, high):
+    pivot = array[low]
+    
+    # ...
+  ```
+  </Fragment>
+</PackageManagerTabs>
+
+
+### Pointers
+
+Hoare's partition scheme uses two pointers that start at both ends of the array, then move towards each other. All values lower than the pivot must go to the left of it, and all values higher than the pivot must go to the right.
+If the element to the left of the pivot has a greater value than the pivot and the element to the right of the pivot has a lower value than the pivot, the positions of these elements are swapped.
+
+First, we declare the pointers with low and high as our initial values. Inside an infinite loop, we add the logic for the movement of each pointer:
+* While the value of the element to the left of the pivot is lower than the pivot we move our pointer to the right.
+* While the value of the element to the right of the pivot is higher than the pivot we move our pointer to the left.
+* If the pointers cross or meet, meaning they have the same value, or the left one is now higher than the right one, we return a value as the next pivot, here we return our right pointer as the next pivot.
+* If the pointers haven't crossed, then we swap the values in the array and the loop continues.
+
+<PackageManagerTabs>
+  <Fragment slot="js">
+  ```js
+  // ...
+  let left = low
+  let right = high
+
+  while (true) {
+    // we move the left pointer to the right by adding 1 to it
+    while (array[left] < pivot) {
+      left++
+    }
+
+    // we move the right pointer to the left by substracting one from it
+    while (array[right] > pivot) {
+      right--
+    }
+
+    // when the pointers meet or coress, we return
+    if(left >= right) {
+      return right
+    }
+
+    // swap the element at the left and the right of the pivot
+    let temp = array[left]
+    array[left] = array[right]
+    array[right] = temp
+  }
+  ```
+  </Fragment>
+  <Fragment slot="go">
+  ```go
+  // ...
+  left := low
+  right := high
+
+  for {
+    // we move the left pointer to the right by adding 1 to it
+    for array[left] < pivot {
+      left++
+    }
+
+    // we move the right pointer to the left by subtracting one from it
+    for array[right] > pivot {
+      right--
+    }
+
+    // when the pointers meet or cross, we return
+    if left >= right {
+      return right
+    }
+
+    // swap the elements at the left and right of the pivot
+    array[left],array[right] = array[right],array[left]
+  }
+  ```
+  </Fragment>
+  <Fragment slot="python">
+  ```python
+  # ...
+  left = low
+  right = high
+  
+    while True:
+      # we move the left pointer to the right by adding 1 to it
+      while array[left] < pivot:
+        left += 1
+
+      # we move the right pointer to the left by substracting one from it
+      while array[right] > pivot:
+        right -= 1
+
+      # when the pointers meet or cross, we return
+      if left >= right:
+        return right
+
+      # swap the elements at the left and right of the pivot
+      array[left], array[right] = array[right], array[left]
+  ```
+  </Fragment>
+</PackageManagerTabs>
+
+## Final solution
+
+The complete code looks like this:
+
+<PackageManagerTabs>
+  <Fragment slot="js">
+  ```js
+  function QuickSort(array, low, high) {
+    if (low < high) {
+      let pivot = partition(array, low, high)
+
+      QuickSort(array, low, pivot)
+      QuickSort(array, pivot + 1, high)
+    }
+  }
+
+
+  function partition(array, low, high) {
+    let pivot = array[low]
+
+    let left = low
+    let right = high
+
+    while (true) {
+      // we move the left pointer to the right by adding 1 to it
+      while (array[left] < pivot) {
+        left++
+      }
+
+      // we move the right pointer to the left by substracting one from it
+      while (array[right] > pivot) {
+        right--
+      }
+
+      // when the pointers meet or coress, we return
+      if (left >= right) {
+        return right
+      }
+
+      // swap the element at the left and the right of the pivot
+      let temp = array[left]
+      array[left] = array[right]
+      array[right] = temp
+    }
+  }
+  ```
+  </Fragment>
+  <Fragment slot="go">
+  ```go
+  func QuickSort(arr []int, low, high int) {
+    if low < high {
+      pivot := partition(arr, low, high)
+
+      QuickSort(arr, low, pivot)
+      QuickSort(arr, pivot+1, high)
+    }
+  }
+
+  func partition(arr []int, low, high int) int {
+    pivot := arr[low]
+
+    left := low
+    right := high
+
+    for {
+      // we move the left pointer to the right by adding 1 to it
+      for arr[left] < pivot {
+        left++
+      }
+
+      // we move the right pointer to the left by subtracting one from it
+      for arr[right] > pivot {
+        right--
+      }
+
+      // when the pointers meet or cross, we return
+      if left >= right {
+        return right
+      }
+
+      // swap the elements at the left and right
+      arr[left], arr[right] = arr[right], arr[left]
+    }
+  }
+  ```
+  </Fragment>
+  <Fragment slot="python">
+  ```python
+  def QuickSort(array, low, high):
+    if low < high:
+        pivot = partition(array, low, high)
+        
+        QuickSort(array, low, pivot)
+        QuickSort(array, pivot + 1, high)
+        
+  def partition(array, low, high):
+    pivot = array[low]
+    left = low
+    right = high
+  
+    while True:
+      # we move the left pointer to the right by adding 1 to it
+      while array[left] < pivot:
+        left += 1
+
+      # we move the right pointer to the left by substracting one from it
+      while array[right] > pivot:
+        right -= 1
+
+      # when the pointers meet or cross, we return
+      if left >= right:
+        return right
+
+      # swap the elements at the left and right of the pivot
+      array[left], array[right] = array[right], array[left]
+  ```
+  </Fragment>
+</PackageManagerTabs>
+
+
+
+Our initial call to `QuickSort` looks like this:
+
+<PackageManagerTabs>
+  <Fragment slot="js">
+  ```js
+  let array = [89,60,23,99,10,52,5]
+  QuickSort(array, 0, array.length - 1)
+
+  // output:
+  // [5 10 23 52 60 89 99]
+  ```
+  </Fragment>
+  <Fragment slot="go">
+  ```go
+  package main
+
+  func main() {
+    var arr = []int{89,60,23,99,10,52,5}
+    QuickSort(arr, 0, len(arr)-1)
+  }
+
+  // output:
+  // [5 10 23 52 60 89 99]
+  ```
+  </Fragment>
+  <Fragment slot="python">
+  ```python
+  array = [89,60,23,99,10,52,5]
+  QuickSort(array, 0, len(array) - 1)
+
+  # output:
+  # [5 10 23 52 60 89 99]
+  ```
+  </Fragment>
+</PackageManagerTabs>
+
+
+## Additional Resources
+
+[QuickSort](https://en.wikipedia.org/wiki/QuickSort) - Wikipedia
+
+[Overview of quick sort](https://www.khanacademy.org/computing/computer-science/algorithms/quick-sort/a/overview-of-quicksort) - Khan Academy
+
+[Comparison Sorting Algorithms](https://www.cs.usfca.edu/~galles/visualization/ComparisonSort.html) - University of San Francisco
