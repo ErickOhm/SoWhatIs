@@ -77,20 +77,11 @@
   tfoot td:first-child {
     padding-left: 0.5714286em;
   }
-  .prose button[role="tab"] {
-    background-color: rgba(var(--color-accent));
-    flex: 1;
-    justify-content: center;
-    white-space: nowrap;
-    border-radius: 0;
-    cursor: pointer;
-    padding: 0.6rem 1rem;
-    color: var(--color-text-base);
-    border-bottom: 4px solid transparent;
-    margin-bottom: -4px;
-    background-color: transparent;
-    text-decoration: none;
-    @apply -mb-1 flex-1 cursor-pointer justify-center whitespace-nowrap bg-skin-accent py-2 px-4 text-skin-base;
+  .prose .TabGroup[role="tablist"] {
+    @apply flex border-b-4 border-b-skin-accent
+  }
+  .prose .TabGroup button[role="tab"], .prose .TabGroup a{
+    @apply -mb-1 flex-1 cursor-pointer justify-center whitespace-nowrap bg-skin-accent py-2 px-4 text-skin-base rounded-none border-b-4 no-underline;
   }
   .prose div.tablistContainer {
     @apply -mb-5;
@@ -98,9 +89,8 @@
   .prose div[role="tabpanel"] {
     @apply mt-0;
   }
-  .prose button[aria-selected="true"] {
-    text-decoration: underline 2px solid rgba(var(--color-accent));
-    text-underline-offset: 3px;
+  .prose button[aria-selected="true"], .prose .TabGroup .active{
+    @apply text-skin-base border-b-skin-accent font-bold
   }
   .prose div[role="tablist"] > span {
     @apply absolute left-0 -bottom-1.5 h-1 origin-left bg-skin-accent bg-opacity-100;
