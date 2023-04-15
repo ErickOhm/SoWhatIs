@@ -81,7 +81,7 @@
     @apply flex border-b-4 border-b-skin-accent
   }
   .prose .TabGroup button[role="tab"], .prose .TabGroup a{
-    @apply -mb-1 flex-1 cursor-pointer justify-center whitespace-nowrap bg-skin-accent py-2 px-4 text-skin-base rounded-none border-b-4 no-underline;
+    @apply -mb-1 flex-1 cursor-pointer justify-center whitespace-nowrap py-2 px-4 text-skin-base rounded-none border-b-4 no-underline;
   }
   .prose div.tablistContainer {
     @apply -mb-5;
