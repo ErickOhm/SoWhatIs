@@ -1,0 +1,103 @@
+---
+pubDatetime: 2023-04-15T21:43:57.875Z
+title: Recursion
+featured: True
+draft: false
+tags:
+    - Recursion
+    - Divide and Conquer
+description: What is recursion, what is it good for and when do you use it?
+---
+
+import PackageManagerTabs from '../../components/tabs/PackageManagerTabs.astro'
+import Tip from '../../components/Tip'
+
+Recursion is a programming technique that involves a function calling itself from within its own code. This is use to solve different computational problems where the solution depends on solutions to smaller instances of the same problem.
+
+Let's use a Russian doll as an example:
+![Russian doll](https://media.giphy.com/media/X8HbeXDF7nzaM/giphy.gif)
+When you open a Russian doll what do you see inside? Another Russian doll but slightly smaller. You can then open that smaller doll and see yet another slightly smaller doll. You keep doing this until eventually you reach the last and smallest doll that cannot be opened any further. This is what recursion is all about!
+
+By calling the same function over and over again but using smaller and smaller arguments each time,  you eventually reach something known as the "base case" which is the smallest possible input, at which point the function stops calling itself and returns a final result.
+
+All recursive functions **need** a base case, this base case is how we stop the function from running forever and crashing our app.
+
+A classic example of a recursive function is the [factorial](https://en.wikipedia.org/wiki/Factorial) function which is used to find the factorial of a positive integer `n`. The factorial of `n` is defined as the product of all positive integers from 1 to `n`. So for example, the factorial of 5 is `5 x 4 x 3 x 2 x 1`, which is equal to 120.
+
+<PackageManagerTabs>
+    <Fragment slot="js">
+    ```js
+    function factorial(n) {
+        if(n === 1) {
+            return 1
+        } else {
+            return n * factorial(n-1)
+        }
+    }
+    ```
+    </Fragment>
+    <Fragment slot="go">
+    ```go
+    func factorial(n int) int {
+        if n == 1 {
+            return 1
+        } else {
+            return n * factorial(n-1)
+        }
+    }
+    ```
+    </Fragment>
+    <Fragment slot="python">
+    ```python
+    def factorial(n):
+        if n == 1:
+            return 1
+        else:
+            return n * factorial(n-1)
+    ```
+    </Fragment>
+</PackageManagerTabs>
+
+In this function, if the input `n` is 1, the function returns 1 (this is the base case). Otherwise, the function multiplies `n` by the result of calling itself with `n-1` as the input.
+
+When the function is called with an initial value of `5`, it will call itself with an input of 4, then 3, then 2, and finally 1 (the base case) at which point it will simply return 1 and will be multiplied by the value of `n` of the previous function call.
+
+An important thing you must keep in mind is that functions are called using a [stack](https://en.wikipedia.org/wiki/Stack_(abstract_data_type)) which is a Last In First Out data structure, which means our last function call will be the first to return and then it will go backwards in the order that we called the functions.
+
+In our factorial function our stack would look something like this:
+
+```js
+factorial(1)
+factorial(2)
+factorial(3)
+factorial(4)
+factorial(5)
+```
+
+Our last function call passes `1` as the input, this hits the base case and simply returns `1`, then the function call with `2` as input is computed, this goes to the `else` case and returns `n * factorial(n - 1)` which turns into `2 * 1` and returns `2`, our next function then computes `3 * 2` and returns `6` and so on until we reach our initial function call which is `5 * 25` and returns our last value of `120`.
+
+<Tip type="warn">
+    **Careful:** with a sufficiently large input (or without a base case to stop the recursion) your function calls can grow more than your app can handle causing a [stack overflow](https://en.wikipedia.org/wiki/Stack_overflow) and crash your app.
+</Tip>
+
+## Should you use recursion?
+
+Recursion can be an elegant and concise way of solving problems where you are able to break the main problem into smaller ones that make it easier to solve, particularly when we have more than one recursive call in our function. You should, however, consider the potential downsides of recursion when thinking about implementing it.
+
+* Large input sizes can lead to stack overflow errors.
+* In certain languages there is a significant time and space cost associated with recursive programs, due to the overhead required to manage the stack and the relative slowness of function calls.
+* Debugging can be complicated with recursive function especially as the input size grows.
+
+While there are methods for improving the performance and efficiency of recursive functions, it is beyond the scope of this post but I will leave some resources below for further reading.
+
+## Final thoughts
+
+Overall, while recursion can be hard to comprehend or reason about, it is an essential skill that can help you solve many problems in a concise and elegant way, you should always be aware of the requirements for your app to know if it is the right choice and consider the tradeoffs between a recursive solution and an iterative one.
+
+## Additional Resources
+
+[Recursion](https://en.wikipedia.org/wiki/Recursion_(computer_science)) - Wikipedia
+
+[Recursive Algorithms](https://www.khanacademy.org/computing/computer-science/algorithms/recursive-algorithms/) - Khan Academy
+
+[Recursion Tree Visualizer](https://recursion.vercel.app/)
