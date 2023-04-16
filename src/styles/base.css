@@ -11,6 +11,7 @@
     --color-card: 189, 189, 189;
     --color-card-muted: 207, 191, 234;
     --color-border: 92, 92, 92;
+    --color-warn: 234, 179, 8;
   }
   html[data-theme="dark"] {
     --color-fill: 30, 41, 59;
@@ -19,6 +20,7 @@
     --color-card: 71, 85, 105;
     --color-card-muted: 51, 65, 85;
     --color-border: 148, 163, 184;
+    --color-warn: 194,65,12;
   }
   #sun-svg,
   html[data-theme="dark"] #moon-svg {
@@ -95,8 +97,15 @@
   .prose div[role="tablist"] > span {
     @apply absolute left-0 -bottom-1.5 h-1 origin-left bg-skin-accent bg-opacity-100;
   }
+  .prose aside.aside {
+    @apply p-5  border-l-4 bg-opacity-50
+  }
   .prose aside.aside.info {
-    @apply bg-skin-card-muted p-5 border-l-skin-accent border-l-4 bg-opacity-50
+    @apply bg-skin-card-muted border-l-skin-accent
+  }
+  .prose aside.aside.warn {
+    background-color: rgba(var(--color-warn),0.8);
+    border-left-color: rgb(var(--color-warn));
   }
   .prose h2#table-of-contents {
     @apply mb-2;
