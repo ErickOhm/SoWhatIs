@@ -1,0 +1,408 @@
+---
+pubDatetime: 2023-05-01T03:20:43.399Z
+title: Hashmap
+featured: True 
+draft: false
+tags:
+    - Data Structures
+description: What is a hashmap/hashtable and how does it work?
+---
+
+import PackageManagerTabs from '../../components/tabs/PackageManagerTabs.astro'
+import Tip from '../../components/Tip'
+
+Hash maps, also called Hash tables, are a common data structure that stores key-value pairs for efficient retrieval. A value stored in a Hashmap is retrieved using the same key that was used to store it; This means the keys on a hashmap must be unique.
+
+Hashmaps can be used in many places, for example: to aggregate data based on specific criteria.
+
+<PackageManagerTabs>
+    <Fragment slot="js">
+    ```js
+    const user = {
+        name: "Erick",
+        age: 25,
+        website: "https://sowhat.is"
+    }
+    ```
+    </Fragment>
+    <Fragment slot="go">
+    ```go
+    user := map[string]any{
+        "name":    "Erick",
+		"age":     25,
+		"website": "https://sowhat.is",
+    }
+    ```
+    </Fragment>
+    <Fragment slot="python">
+    ```python
+    user = {
+        "name": "Erick",
+        "age": 25,
+        "website": "https://sowhat.is"
+    }
+    ```
+    </Fragment>
+</PackageManagerTabs>
+
+They can also be used in algorithms, for example: to keep track of the occurrences of a word in a text.
+
+<PackageManagerTabs>
+    <Fragment slot="js">
+    ```js
+    function countWords(text) {
+        counts = {};
+
+        // split the text on every space, loop through it
+        // and check if the word is already in counts
+        text.split(" ").forEach((word) => {
+            // if word not in numbers, return 0
+            // add 1 to the returned value and set it in counts[word]
+            counts[word] = (counts[word] ?? 0) + 1;
+        });
+
+        return counts;
+    }
+    ```
+    </Fragment>
+    <Fragment slot="go">
+    ```go
+    func countWords(text string) map[string]int {
+        // split the text at any whitespace
+        words := strings.Fields(text)
+        // declare our hashmap where the key will be a word
+        // and the value will be an integer to keep count
+        counts := make(map[string]int)
+        for _, word := range words {
+            counts[word]++
+        }
+        return counts
+    }
+    ```
+    </Fragment>
+    <Fragment slot="python">
+    ```python
+    def count_words(text):
+        # split the text at a whitespace
+        words = text.split()
+        # declare our dictionary
+        counts = {}
+        for word in words:
+            # get the value at counts[word]
+            # if not set, return 0
+            # add 1 to returned value and set it in counts[word]
+            counts[word] = counts.get(word, 0) + 1       
+
+        return counts
+    ```
+    </Fragment>
+</PackageManagerTabs>
+
+A Hash map uses a hash function to map each key to a unique index in an underlying array, where the corresponding value can be stored. When we want to retrieve the value, we use the same hash function to find the index where the value was stored.
+
+One of the main advantages of the hashmap is its constant-time O(1) operations which make it so inserting and retrieving data takes roughly the same amount of time regardless of the size of the hashmap.
+
+## The hash function
+
+Generally, a hash function is a mathematical algorithm that takes an input (like a string which will be the key in our hashmap) and returns a unique, fixed-size representation of said input. In the case of the hashmap, this input will turn into an index which we use to store our value in an array.
+
+A good hash function must reduce the likelihood of collisions in which two or more different keys are passed through the function, and the same output is returned. It is impossible to guarantee that there will be no collisions without knowing all the keys ahead of time, so we aim to make it as rare of a situation as possible.
+
+## Rough implementation
+
+For simplicity, we will implement a very simple and straightforward hashing function to demonstrate how it works and how collisions can occur.
+
+First, we create our hash function, which takes two arguments: a string called `key_name` which will be used to set and retrieve our data, and an integer `table_size` which is the size of the underlying array used in our hashmap. The `table_size` must be big enough to minimize the chances of collisions while not being too big that wastes space; in a real-life implementation of a hashmap, we might resize the array automatically whenever it gets close to being filled.
+
+<Tip type="info">
+**Note:** In this example function, we are using a string as the key name of our hashmap; however, hashmaps can use any data as a key, so we could just as well use numbers, arrays, or other maps as a key, for simplicity however we will keep it as string only.
+</Tip>
+
+<PackageManagerTabs>
+    <Fragment slot="js">
+        ```js
+        function hashFunction(keyName, tableSize) {
+        }
+        ```
+    </Fragment>
+    <Fragment slot="go">
+        ```go
+        func hashFunction(keyName string, tableSize int) {
+        }
+        ```
+    </Fragment>
+    <Fragment slot="python">
+        ```python
+        def hashFunction(key_name, table_size):
+        ```
+    </Fragment>
+</PackageManagerTabs>
+
+
+Then, we declare a variable `value` where we will store the sum of all character codes in our string. This [ASCII code table](https://www.ascii-code.com/) shows the value of different symbols and letters.
+
+<PackageManagerTabs>
+    <Fragment slot="js">
+    ```js
+    function hashFunction(keyName, tableSize) {
+        let value = 0;
+
+        for(let idx = 0; idx < keyName.length; idx++) {
+            value += keyName.charCodeAt(idx);
+        }
+    }
+    ```
+    </Fragment>
+    <Fragment slot="go">
+    ```go
+    func hashFunction(keyName string, tableSize int) {
+        value := 0
+
+        for idx, charCode := range keyName {
+            value += int(charCode)
+	    }
+    }
+    ```
+    </Fragment>
+    <Fragment slot="python">
+    ```python
+    def hashFunction(key_name, table_size):
+        value = 0
+
+        for char in key_name:
+            value += ord(char)
+    ```
+    </Fragment>
+</PackageManagerTabs>
+
+Finally, we perform a [modulus or remainder operation](https://www.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/what-is-modular-arithmetic) on our value with respect to the `table_size`, which will result in an index value within the range of 0 to `table_size - 1`, and use that to store our data in the array.
+
+<PackageManagerTabs>
+    <Fragment slot="js">
+    ```js
+    function hashFunction(keyName, tableSize) {
+        let value = 0;
+
+        for(let idx = 0; idx < keyName.length; idx++) {
+            value += keyName.charCodeAt(idx);
+        }
+
+        return value % tableSize;
+    }
+    ```
+    </Fragment>
+    <Fragment slot="go">
+    ```go
+    func hashFunction(keyName string, tableSize int) int {
+        value := 0
+
+        for _, charCode := range keyName {
+            value += int(charCode)
+	    }
+
+        return value % tableSize
+    }
+    ```
+    </Fragment>
+    <Fragment slot="python">
+    ```python
+    def hashFunction(key_name, table_size):
+        value = 0
+
+        for char in key_name:
+            value += ord(char)
+        
+        return value % table_size
+    ```
+    </Fragment>
+</PackageManagerTabs>
+
+Now whenever we want to set a new value in our hashmap, we use this function to get a (hopefully) unique index and store it in an array to be retrieved at a later time.
+
+<PackageManagerTabs>
+    <Fragment slot="js">
+    ```js
+    const tableSize = 7;
+
+    let hash = hashFunction("KEY", tableSize);
+    console.log(hash); // 2
+    hash = hashFunction("Hello", tableSize);
+    console.log(hash); // 3
+    hash = hashFunction("pho", tableSize);
+    console.log(hash); // 1
+    ```
+    </Fragment>
+    <Fragment slot="go">
+    ```go
+    func main() {
+        const tableSize = 7
+        hash := hashFunction("KEY", tableSize)
+        println(hash) // 2
+        hash = hashFunction("Hello", tableSize)
+        println(hash) // 3
+        hash = hashFunction("pho", tableSize)
+        println(hash) // 1
+    }
+    ```
+    </Fragment>
+    <Fragment slot="python">
+    ```python
+    TABLE_SIZE = 7
+    hash_val = hash_function("KEY", TABLE_SIZE)
+    print(hash_val) # 2
+    hash_val = hash_function("Hello", TABLE_SIZE)
+    print(hash_val) # 3
+    hash_val = hash_function("pho", TABLE_SIZE)
+    print(hash_val) # 1
+    ```
+    </Fragment>
+</PackageManagerTabs>
+
+## Prime number table size
+
+You may be wondering why we picked `7` as the `table_size` here; 7 is a prime number, and prime numbers help us reduce the chances of collisions and ensure a more evenly spread-out table.
+
+Consider a set of keys 0 to 100 and a hash table with an array size of `12`. Because the number 12 has multiple factors, we will see a pattern emerge quickly in our distribution: multiples of 12 go to index `0`, multiples of 3 will go to index `3`, etcetera.
+
+* Keys [0,12,24,36,...] will be hashed to index 0
+
+* Keys [3,15,27,39,...] will be hashed to index 3
+
+* Keys [6,18,30,42,...] will be hashed to index 6
+
+* Keys [9,21,33,45,...] will be hashed to index 9
+
+If our keys were evenly distributed, this would not be a problem, but hashing algorithms cannot know if the keys will be evenly distributed, and in most cases, they will not be. Therefore, to minimize collisions, it is essential to reduce the number of common factors between our keys' values and the array's size. Prime numbers are ideal for this situation because they only have two factors: 1 and the prime number itself.
+
+We can see for ourselves how a prime number affects the distribution of keys in our array:
+
+<PackageManagerTabs>
+    <Fragment slot="js">
+    ```js
+    const generateNums = (tableSize) => {
+        let numbers = {};
+        for (let i = 10; i < 200; i++) {
+            let result = (i * 10) % tableSize;
+            // check if the result already exists inside the object
+            // if not, return 0
+            // add 1 to the value and set it inside numbers
+            numbers[result] = (numbers[result] ?? 0) + 1;
+        }
+
+        return numbers;
+    };
+    ```
+    </Fragment>
+    <Fragment slot="go">
+    ```go
+    func generateNums(tableSize int) map[int]int {
+        numbers := make(map[int]int)
+
+        for i := 10; i < 200; i++ {
+            result := (i * 10) % tableSize
+            // add 1 to the result inside numbers
+            numbers[result]++
+        }
+
+        return numbers
+    }
+    ```
+    </Fragment>
+    <Fragment slot="python">
+    ```python
+    def generateNums(table_size):
+        numbers = {}
+
+        for i in range(10, 200):
+            result = (i * 10) % table_size
+            # if the result doesn't exist already in the dictionary return 0
+            # add 1 to the number returned and set it in the dictionary
+            numbers[result] = numbers.get(result, 0) + 1
+
+        return numbers
+    ```
+    </Fragment>
+</PackageManagerTabs>
+
+If we run this function using a `table_size` of `12`, which is **not** a prime number, we get a result like this:
+
+<PackageManagerTabs>
+    <Fragment slot="js">
+    ```js
+    { '0': 32, '2': 32, '4': 32, '6': 31, '8': 31, '10': 32 }
+    ```
+    </Fragment>
+    <Fragment slot="go">
+    ```go
+    map[0:32 2:32 4:32 6:31 8:31 10:32]
+    ```
+    </Fragment>
+    <Fragment slot="python">
+    ```python
+    {4: 32, 2: 32, 0: 32, 10: 32, 8: 31, 6: 31}
+    ```
+    </Fragment>
+</PackageManagerTabs>
+
+Running the same function but passing a `table_size` of `11`, which **is** a prime number, we get a very different result:
+
+<PackageManagerTabs>
+    <Fragment slot="js">
+    ```js
+    { '0': 18, '1': 18, '2': 17, '3': 17, '4': 17, '5': 17, '6': 17, '7': 17, '8': 17, '9': 17, '10': 18}
+    ```
+    </Fragment>
+    <Fragment slot="go">
+    ```go
+    map[0:18 1:18 2:17 3:17 4:17 5:17 6:17 7:17 8:17 9:17 10:18]
+    ```
+    </Fragment>
+    <Fragment slot="python">
+    ```python
+    {1: 18, 0: 18, 10: 18, 9: 17, 8: 17, 7: 17, 6: 17, 5: 17, 4: 17, 3: 17, 2: 17}
+    ```
+    </Fragment>
+</PackageManagerTabs>
+
+Even tho we the `table_size` of `12` is a larger number, we can see that only six indexes are being used; this would be our data being clustered and unevenly spread. The `table_size` of `11`, on the other hand, utilizes all the indexes and evenly distributes our numbers across all of them, hence our use of prime numbers in the hash function.
+
+As mentioned before, a hash function can only guarantee uniqueness with previous knowledge of all the keys that will be used, even if we use prime numbers, much better hash functions, or both. In our simple implementation of a hash function (especially given the small table size of 5), it is easy to find collisions for different keys; for example, the keys `"Hello"` and `"One"` would result in the same index being returned: `3`, we can increment our table size or use a better hashing function, but you would still not be able to guarantee uniqueness, so what do we do then?
+
+## Dealing with collisions
+
+There are several ways of dealing with collisions; perhaps the easiest and most common method is the "Chaining" method. In this method, each element of the hash table is a linked list, and when a collision occurs, the new key-value pair is added to the list at the corresponding index; this means that instead of just retrieving the value at index `y` we must check if the value at index `y` contains the key-value pair we are looking for, if not, we follow the linked-list until we find it.
+
+The following of a linked list is why a hash method that evenly spreads out the indexes is essential; otherwise, we might end up following a long linked list to find our data, thus moving from a constant-time operation O(1) to a linear-time O(n).
+
+Another collision resolution method is [Open addressing](https://en.wikipedia.org/wiki/Open_addressing), in which linked-lists are not used, and the hash resolution is, instead, performed through probing.
+
+## Big O time
+
+The [Big O notation](https://en.wikipedia.org/wiki/Big_O_notation) times for a hashmap are as follows:
+
+1. Insertion: O(1), on average, in the worst-case scenario when there are many collisions, it can degrade to O(n).
+
+2. Lookup: O(1), on average, in the worst-case scenario, when there are many collisions and the linked list at the corresponding index becomes too long, it can degrade to O(n).
+
+3. Deletion: O(1), on average, can degrade to O(n) in the worst case scenario.
+
+These constant-time operations, as well as the ease of use, are why hashmaps are so widely used in computer science; regardless of the size of our data, we can expect extremely fast access and insertion.
+
+## Hashmaps in programming languages
+
+You are probably already using hashmaps in your programming language. Most programming languages have an implementation of them that, while it can vary in implementation or what features it supports, all serve the same purpose: store key-value pairs.
+
+In Javascript: Objects, Sets, and Maps are hashmap-like data structures that are used to store key-value pairs, however in a more strict definition and taking into account how each of these is implemented according to the ECMAScript standard, Objects and Sets are not actual hashmaps and Maps **can** be but do not necessarily have to.
+
+> Maps must be implemented using either hash tables or other mechanisms that, on average, provide access times that are sublinear on the number of elements in the collection.
+> [ECMAScript 2024 Specification](https://tc39.es/ecma262/multipage/keyed-collections.html#sec-map-objects)
+
+In Python: hashmaps are called Dictionarie, and collisions are handled using the open addressing technique.
+
+In Go: hashmaps are the map data structure, and they support concurrency, which means they can be accessed safely from multiple goroutines without causing data races or synchronization issues.
+
+## Additional Resources
+
+[What is a hashmap in programming and where can it be used](https://stackoverflow.com/questions/2592043/what-is-a-hash-map-in-programming-and-where-can-it-be-used)
+
+[Hash table](https://en.wikipedia.org/wiki/Hash_table)
