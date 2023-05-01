@@ -1,11 +1,11 @@
 ---
 pubDatetime: 2023-05-01T03:20:43.399Z
-title: Hashmap
+title: A Hashmap
 featured: True 
 draft: false
 tags:
     - Data Structures
-description: What is a hashmap/hashtable and how does it work?
+description: What is a hash map or hash table and how does it work?
 ---
 
 import PackageManagerTabs from '../../components/tabs/PackageManagerTabs.astro'
@@ -364,7 +364,7 @@ Running the same function but passing a `table_size` of `11`, which **is** a pri
     </Fragment>
 </PackageManagerTabs>
 
-Even tho we the `table_size` of `12` is a larger number, we can see that only six indexes are being used; this would be our data being clustered and unevenly spread. The `table_size` of `11`, on the other hand, utilizes all the indexes and evenly distributes our numbers across all of them, hence our use of prime numbers in the hash function.
+Even tho the `table_size` of `12` is a larger number, we can see that only six indexes are being used; this would be our data being clustered and unevenly spread. The `table_size` of `11`, on the other hand, utilizes all the indexes and evenly distributes our numbers across all of them, hence our use of prime numbers in the hash function.
 
 As mentioned before, a hash function can only guarantee uniqueness with previous knowledge of all the keys that will be used, even if we use prime numbers, much better hash functions, or both. In our simple implementation of a hash function (especially given the small table size of 5), it is easy to find collisions for different keys; for example, the keys `"Hello"` and `"One"` would result in the same index being returned: `3`, we can increment our table size or use a better hashing function, but you would still not be able to guarantee uniqueness, so what do we do then?
 
@@ -397,7 +397,7 @@ In Javascript: Objects, Sets, and Maps are hashmap-like data structures that are
 > Maps must be implemented using either hash tables or other mechanisms that, on average, provide access times that are sublinear on the number of elements in the collection.
 > [ECMAScript 2024 Specification](https://tc39.es/ecma262/multipage/keyed-collections.html#sec-map-objects)
 
-In Python: hashmaps are called Dictionarie, and collisions are handled using the open addressing technique.
+In Python: hashmaps are called dictionaries, and collisions are handled using the open addressing technique.
 
 In Go: hashmaps are the map data structure, and they support concurrency, which means they can be accessed safely from multiple goroutines without causing data races or synchronization issues.
 
