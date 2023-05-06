@@ -1,0 +1,66 @@
+---
+pubDatetime: 2023-05-01T03:20:43.399Z
+title: An Array
+featured: True
+draft: True
+tags:
+    - Data Structures
+description: What is an array, how does it work, and what is it useful for?
+---
+
+import PackageManagerTabs from '../../components/tabs/PackageManagerTabs.astro'
+import Tip from '../../components/Tip'
+
+An array is a fixed-sized data structure that consists of a collection of elements or values of the same type.
+
+Arrays are some of the oldest and most utilized data structures, many other data structures like [Hash maps](https://sowhat.is/a-hashmap) use arrays for their implementation; this is because given an index the lookup is constant-time O(1) which means that the array can grow indefinitely and you can still access data almost instantly.
+
+## The index
+
+An index is the position of a given value in the array, some implementations have arrays start at index 1, which means the 1st element in the array is at index 1, the second at index 2 and so on; Most implementations, however, will have the array start at index 0.
+
+## Same data types and fixed size
+
+The reason behind the very fast lookup speeds of an array is because they are stored in a contiguous memory location, and not scattered through different parts of the memory, when an array is initialized, you set the size so the system can claim that space in memory for the array. That means that if you declare an array of 8-bit integers that can hold 10 elements, the system will reserve an 80-bit space of memory for us to use.
+
+Now that we have our array in memory and we know how big our data is we can get to any spot on the array via our index and some basic math. If we have our array of size 10 that holds 8-bit integers all we need to do is get the [memory address](https://en.wikipedia.org/wiki/Memory_address) where our array starts.
+
+<Tip type="info">
+**Note:** A memory address is a unique identifier that points to a specific location in a computer's memory, allowing the computer to read or write data at that location. It acts like a reference label, helping the computer keep track of where information is stored and retrieved while running programs and processing data.
+</Tip>
+
+Let's assume that our array starts at memory address `200`, if we want to get the element inside the array that is at position 3 all we have to do is sum the start of the array by the product of the index times the size of our data, in this case 8 bits: `200 + (index * 8)`. This will gives us memory address `224` and we know that from that point, the next 8 bits are our data and we can retrieve it and read it.
+
+<PackageManagerTabs>
+    <Fragment slot="js">
+    ```js
+    // without a specific size, the typed array will automatically resize
+    const typedArray = new Int8Array(8, {maxByteLength: 10});
+    typedArray[0] = 2;
+    typedArray[3] = 42;
+
+    console.log(typedArray); // [2, 0, 0, 42, 0, 0, 0, 0, 0, 0]
+    ```
+    </Fragment>
+    <Fragment slot="go">
+    ```go
+    var array [10]int8
+    array[0] = 2
+    array[3] = 42
+
+    fmt.Println(array) // [2 0 0 42 0 0 0 0 0 0]
+    ```
+    </Fragment>
+    <Fragment slot="python">
+    ```python
+    import array
+
+    # create an array of 10 int8 values with an initial value of 0
+    int_array = array.array('b', [0] * 10)
+    int_array[0] = 2
+    int_array[3] = 42
+
+    print(int_array) # array('b', [2, 0, 0, 42, 0, 0, 0, 0, 0, 0])
+    ```
+    </Fragment>
+</PackageManagerTabs>
