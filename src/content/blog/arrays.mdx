@@ -11,30 +11,30 @@ description: What is an array, how does it work, and what is it useful for?
 import PackageManagerTabs from '../../components/tabs/PackageManagerTabs.astro'
 import Tip from '../../components/Tip'
 
-An array is a fixed-sized data structure that consists of a collection of elements or values of the same type.
+An *array* is a data structure that provides a fixed-size, ordered collection of elements or values of the same type.
 
-Arrays are some of the oldest and most utilized data structures, many other data structures like [Hash maps](https://sowhat.is/a-hashmap) use arrays for their implementation; this is because given an index the lookup is constant-time O(1) which means that the array can grow indefinitely and you can still access data almost instantly.
+Arrays are some of the oldest and most utilized data structures. Many other data structures like [Hash maps](https://sowhat.is/a-hashmap) use arrays for their implementation; this is because, given an index, the lookup is constant-time O(1) which means that the array can grow indefinitely, and you can still access data almost instantly.
 
 ## The index
 
-An index is the position of a given value in the array, some implementations have arrays start at index 1, which means the 1st element in the array is at index 1, the second at index 2 and so on; Most implementations, however, will have the array start at index 0.
+An index is the position of a given value in the array. Some implementations have arrays start at index 1, which means the first element in the array is at index 1, the second at index 2, and so on; Most implementations, however, will have the array start at index 0.
 
 ## Same data types and fixed size
 
-The reason behind the very fast lookup speeds of an array is because they are stored in a contiguous memory location, and not scattered through different parts of the memory, when an array is initialized, you set the size so the system can claim that space in memory for the array. That means that if you declare an array of 8-bit integers that can hold 10 elements, the system will reserve an 80-bit space of memory for us to use.
+The reason behind an array's very fast lookup speeds is that they are stored in a contiguous memory location and not scattered through different parts of the memory. When an array is initialized, we set the size of it so the system can claim that space in memory for the array. That means that if we declare an array of 8-bit integers that can hold ten elements, the system will reserve an 80-bit space of memory for us to use.
 
-Now that we have our array in memory and we know how big our data is we can get to any spot on the array via our index and some basic math. If we have our array of size 10 that holds 8-bit integers all we need to do is get the [memory address](https://en.wikipedia.org/wiki/Memory_address) where our array starts.
+Now that we have our array in memory and know how big our data is, we can get to any spot on the array via our index and some basic math. If our array of size 10 holds 8-bit integers, all we need to do is get the [memory address](https://en.wikipedia.org/wiki/Memory_address) where our array starts.
 
 <Tip type="info">
-**Note:** A memory address is a unique identifier that points to a specific location in a computer's memory, allowing the computer to read or write data at that location. It acts like a reference label, helping the computer keep track of where information is stored and retrieved while running programs and processing data.
+**Note:** A memory address is a unique identifier that points to a specific location in a computer's memory, allowing the computer to read or write data at that location. It acts like a reference label, helping the computer track where information is stored and retrieved while running programs and processing data.
 </Tip>
 
-Let's assume that our array starts at memory address `200`, if we want to get the element inside the array that is at position 3 all we have to do is sum the start of the array by the product of the index times the size of our data, in this case 8 bits: `200 + (index * 8)`. This will gives us memory address `224` and we know that from that point, the next 8 bits are our data and we can retrieve it and read it.
+Let us assume that our array starts at memory address `200`. Suppose we want to get the element inside the array at position three. In that case, all we have to do is sum the start of the array by the product of the index times the size of our data, in this case, 8 bits: `200 + (index * 8)`; This will give us memory address `224,` and we know that from that point, the next 8 bits are our data and we can retrieve it and read it.
 
 <PackageManagerTabs>
     <Fragment slot="js">
     ```js
-    // without a specific size, the typed array will automatically resize
+    // Without a specific size, the typed array will automatically resize
     const typedArray = new Int8Array(8, {maxByteLength: 10});
     typedArray[0] = 2;
     typedArray[3] = 42;
@@ -64,3 +64,115 @@ Let's assume that our array starts at memory address `200`, if we want to get th
     ```
     </Fragment>
 </PackageManagerTabs>
+
+## Inflexible by design
+
+Arrays are inflexible, so the implementations we see more often are a more flexible version, often called slices or lists. The flexible implementations handle resizing for us because we often do not know what the final size of our array will be, and setting a huge array size is often a waste of space; we, instead, resize the array once it has reached its total capacity, this is done by declaring an entirely new array with a bigger size limit and copying everything from the original array onto the new one; this does come with a performance penalty which can become very obvious when our array is large and resized often.
+
+<PackageManagerTabs>
+    <Fragment slot="js">
+    ```js
+    // In Javascript, flexible arrays are also called arrays
+    const array = [];
+    console.log(array.length) // 0
+
+    array.push("hello", "world")
+
+    // Resizing is handled automatically
+    console.log(array) // ["hello", "world"]
+    console.log(array.length) // 2
+    ```
+    </Fragment>
+    <Fragment slot="go">
+    ```go
+    // In Go, the flexible arrays are called slices
+    slice := make([]string, 0)
+    fmt.Println(len(slice)) // 0
+
+    slice = append(slice, "hello", "world")
+
+    // Resizing is handled automatically
+    fmt.Println(slice) // [hello world]
+    fmt.Println(len(slice)) // 2
+    ```
+    </Fragment>
+    <Fragment slot="python">
+    ```python
+    # In Python, flexible arrays are called Lists
+    my_list = []
+    print(len(my_list)) # 0
+
+    my_list.append("hello")
+    my_list.append("world")
+
+    # Resizing is handled automatically
+    print(my_list) # ['hello', 'world']
+    print(len(my_list)) # 2
+    ```
+    </Fragment>
+</PackageManagerTabs>
+
+Another thing flexible implementations may allow is the ability to store more than one type of data inside of the array, so instead of being made up entirely of off integers or strings, we can store whatever mix of data we wish; we can have integers, strings, and other arrays inside of our array; this, however, means that the data structure underneath our slice is not an actual array; for example, Javascript allows both variable-size and multiple data types in their arrays but under the hood they are objects where the keys are numeric indices.
+
+<Tip type="info">
+Generally, the ability to store different data types in an array is not present in strictly typed languages like Go or Java; instead, it is a property of dynamically typed languages like Javascript or Python.
+</Tip>
+
+<PackageManagerTabs>
+    <Fragment slot="js">
+    ```js
+    const array = [];
+
+    array.push("hello", 42)
+
+    // multiple data types are allowed in Javascript arrays
+    console.log(array) // ["hello", 42]
+    ```
+    </Fragment>
+    <Fragment slot="go">
+    ```go
+    slice := make([]int, 0)
+
+    slice = append(slice, 42)
+    // In Go, trying to append a data type that is not the one initially declared will result in a compiler error.
+    slice = append(slice, "hello") // cannot use "hello" (untyped string constant) as int value in argument to append
+    ```
+    </Fragment>
+    <Fragment slot="python">
+    ```python
+    my_list = []
+    
+    my_list.append("hello")
+    my_list.append(42)
+
+    # Multiple data types are allowed in Python lists
+    print(my_list) # ['hello', 42]
+    ```
+    </Fragment>
+</PackageManagerTabs>
+
+## Use Cases
+
+Arrays are well suited in situations where the collection size is known or stays mostly the same.
+
+Arrays are commonly used in mathematical operations; for example, the mathematical concept of a [matrix](https://en.wikipedia.org/wiki/Matrix_(mathematics)) can be represented as a two-dimensional grid; this is why often two-dimensional arrays (an array that contains more arrays) are called "matrices."
+
+![Two, three by three matrices being summed, left-side matrix contains the numbers one through nine in order, rigth-side matrix contains the numbers in reverse order nine through one, the result is a three by three matrix with all numbers being 10](https://codeforwin.org/wp-content/uploads/2015/07/matrix-addition.png)
+
+They are also used for storing large data sets or when there is a need for random access to elements; for example, in an application that tests our internet speed, we can use an array to store the speed values over a defined period; This allows for easy calculations like averages and trends.
+
+Arrays are also used in many algorithms and file formats; for example, an image can be represented as a two-dimensional array where each value represents a pixel on the image; this makes calculations that help to process images easier, like compression algorithms or filters.
+
+## Big O notation
+
+The [Big O notation](https://en.wikipedia.org/wiki/Big_O_notation) for an array are as follows:
+
+| Operation         | Big O |
+|-------------------|-------|
+| Insert to end     | O(1)  |
+| Insert at start   | O(n)  |
+| Remove from end   | O(1)  |
+| Remove from start | O(n)  |
+| Search            | O(n)  |
+| Access            | O(1)  |
+| Space             | O(n)  |
