@@ -376,15 +376,16 @@ The following of a linked list is why a hash method that evenly spreads out the 
 
 Another collision resolution method is [Open addressing](https://en.wikipedia.org/wiki/Open_addressing), in which linked-lists are not used, and the hash resolution is, instead, performed through probing.
 
-## Big O time
+## Big O notation
 
-The [Big O notation](https://en.wikipedia.org/wiki/Big_O_notation) times for a hashmap are as follows:
+The [Big O notation](https://en.wikipedia.org/wiki/Big_O_notation) for a hashmap are as follows:
 
-1. Insertion: O(1), on average, in the worst-case scenario when there are many collisions, it can degrade to O(n).
-
-2. Lookup: O(1), on average, in the worst-case scenario, when there are many collisions and the linked list at the corresponding index becomes too long, it can degrade to O(n).
-
-3. Deletion: O(1), on average, can degrade to O(n) in the worst case scenario.
+| Operation | Average | Worst case |
+|-----------|---------|------------|
+| Insert    | O(1)    | O(n)       |
+| Access    | O(1)    | O(n)       |
+| Delete    | O(1)    | O(n)       |
+| Space     | O(n)    | O(n)       |
 
 These constant-time operations, as well as the ease of use, are why hashmaps are so widely used in computer science; regardless of the size of our data, we can expect extremely fast access and insertion.
 
