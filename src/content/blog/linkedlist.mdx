@@ -5,5 +5,378 @@ featured: True
 draft: True
 tags:
     - Data Structures
-description: What is an array, how does it work, and what is it useful for?
+description: What is a linked list, how does it work, why is it used?
 ---
+
+import PackageManagerTabs from '../../components/tabs/PackageManagerTabs.astro'
+import Tip from '../../components/Tip'
+
+A *linked list* is a data structure that contains a linear collection of ordered elements, unlike [arrays](https://sowhat.is/an-array), these elements are not required to be stored in a contiguous memory location, instead, each element points to the next.
+
+In this article we will implement a linked list and their most common methods to exemplify how it works and its strengths and weaknesses. 
+
+## The node
+
+Each element in the linked list is called a *node*, in the most basic form of a linked list a node contains two things: data and a reference (or link) to the next node in the sequence.
+
+Our `next` value can be one of two things: A pointer to the next element in the sequence or `null` to signify there is no element after our current one and it is the end of the list.
+
+<Tip type="info">
+**Note:** Unlike arrays, the type of our data can be different and not restricted to a single data type.
+</Tip>
+
+<PackageManagerTabs>
+    <Fragment slot="js">
+    ```js
+    class ListNode {
+        constructor(data) {
+            this.data = data
+            this.next = null
+        }
+    }
+    ```
+    </Fragment>
+    <Fragment slot="go">
+    ```go
+    type ListNode struct {
+        data int8
+        next *ListNode
+    }
+    ```
+    </Fragment>
+    <Fragment slot="python">
+    ```python
+    class ListNode:
+        def __init__(self, data):
+            self.data = data
+            self.next = None
+    ```
+    </Fragment>
+</PackageManagerTabs>
+
+## The list
+
+We can implement our list in several ways, for this example we give our list two values: a `head` which points to the first element on our list, and a `size` which will be used to keep track of the total size of our list.
+
+<PackageManagerTabs>
+    <Fragment slot="js">
+    ```js
+    class LinkedList {
+        constructor() {
+            this.head = null
+            this.size = 0
+        }
+    }
+    ```
+    </Fragment>
+    <Fragment slot="go">
+    ```go
+    type LinkedList struct {
+        head *ListNode
+        size uint
+    }
+    ```
+    </Fragment>
+    <Fragment slot="python">
+    ```python
+    class LinkedList:
+        def __init__(self):
+            self.head = None
+            self.size = 0
+    ```
+    </Fragment>
+</PackageManagerTabs>
+
+## The methods
+
+A list can have several methods depending on how you use it and implement it, we will keep our implementation short as many of these methods are very similar in how they work and what they do.
+
+### Inserting
+
+We can insert an element at one of **three** places in our list: at the start of the list, at the end of the list, and anywhere in between two existing nodes.
+
+The simplest insertion is at the start of the list, all we have to do is set our new node as the head of the list and the `next` value of our node will be what used to be the head of the list and is now the 2nd element in it. This insertion is the main advantage of the Linked List, as it will always be a constant time O(1) operation regardless of the size of our list, because our elements do not need to be in a contiguous region of memory the list can keep growing without requiring an expensive re-sizing operation, unlike arrays.
+
+<PackageManagerTabs>
+    <Fragment slot="js">
+    ```js
+    insert(data) {
+		let newNode = new ListNode(data);
+		newNode.next = this.head;
+		this.head = newNode;
+		this.size++;
+	}
+    ```
+    </Fragment>
+    <Fragment slot="go">
+    ```go
+    func (l *LinkedList) insert(data int8) {
+        newNode := ListNode{data, nil}
+        newNode.next = l.head
+        l.head = &newNode
+        l.size++
+    }
+    ```
+    </Fragment>
+    <Fragment slot="python">
+    ```python
+    def insert(self, data):
+        new_node = ListNode(data)
+
+        new_node.next = self.head
+        self.head = new_node
+        self.size += 1
+    ```
+    </Fragment>
+</PackageManagerTabs>
+
+Inserting at the end of the list can be done in two ways:
+* Keep track of the `tail` of the list so we always know what the list element is and insert it the same way we insert at the start of the list, but with `tail` instead of `head` this would also make our operation a O(1) operation.
+* If we do not keep track of the `tail` we must go through the entire list to add our element to the end, this is a O(n) operation so it would be better to add a `tail` value to our list.
+
+Inserting in between two values somewhere in the middle of our list requires us to go through the list until we find our desired index and add our element, we keep track of both our previous element and the current one, once we find the correct index we set the `next` value of the previous node to our new node and the `next` value of our new node to the current element. If the index that is passed is the start of the list `0` or the end of it `list.size` we can simply call our method for inserting at the start and the end of the list.
+
+<PackageManagerTabs>
+    <Fragment slot="js">
+    ```js
+    insertAt(index, data) {
+		if (index < 0 || index > this.size) return;
+
+		let newNode = new ListNode(data);
+		let currentNode = this.head;
+		let prevNode = null;
+		let currentIndex = 0;
+
+		if (index === 0) {
+			this.insert(data);
+			return;
+		}
+
+		if (index === this.size) {
+			this.insertLast(data);
+			return;
+		}
+
+		while (currentIndex < index) {
+			prevNode = currentNode;
+			currentNode = currentNode.next;
+			currentIndex++;
+		}
+
+		prevNode.next = newNode;
+		newNode.next = currentNode;
+		this.size++;
+	}
+    ```
+    </Fragment>
+    <Fragment slot="go">
+    ```go
+    func (l *LinkedList) insertAt(index uint, data int8) {
+        if index > l.size {
+            return
+        }
+
+        newNode := ListNode{data, nil}
+        currentNode := l.head
+        var prevNode *ListNode
+        var currentIndex uint
+
+        if index == 0 {
+            l.insert(data)
+            return
+        }
+
+        if index == l.size {
+            l.insertLast(data)
+            return
+        }
+
+        for currentIndex < index {
+            prevNode = currentNode
+            currentNode = currentNode.next
+            currentIndex++
+        }
+
+        prevNode.next = &newNode
+        newNode.next = currentNode
+        l.size++
+    }
+    ```
+    </Fragment>
+    <Fragment slot="python">
+    ```python
+    def insert_at(self, index, data):
+        if index < 0 or index > self.size:
+            return
+
+        new_node = ListNode(data)
+        current_node = self.head
+        prev_node = None
+        current_index = 0
+
+        if index == 0:
+            self.insert(data)
+            return
+
+        if index == self.size:
+            self.insert_last(data)
+            return
+
+        while current_index < index:
+            prev_node = current_node
+            current_node = current_node.next
+            current_index += 1
+
+        prev_node.next = new_node
+        new_node.next = current_node
+        self.size += 1
+    ```
+    </Fragment>
+</PackageManagerTabs>
+
+### Removing
+
+Similarly to insertion you have three removal options:
+* Remove the first element of the list
+* Remove the last element of the list
+* Remove an element somewhere in the middle of the list
+
+In a garbage collected language like python, javascript, and Go; All we need to do to delete an element is remove any references that exists that point to said element. If we want to remove the first element of the list we simply grab the `next` element from the head and make that our new head.
+
+Unlike with insertion, to remove the last element we must go through the entire list *even if* we are keeping track of the tail, this is because we need the previous element so we can point the `tail` of the list to that previous element instead of our current one; This, however only holds true with the current type of linked list we are implementing and could be fixed if we kept track of the `previous` element on all our nodes.
+
+To remove the node in the middle of the list, just like with insertion, we must traverse the list until we find the desired index and set the `next` value of our previous node to the `next` value of the node we are removing.
+
+<PackageManagerTabs>
+    <Fragment slot="js">
+    ```js
+    removeAt(index) {
+		if (index < 0 || index >= this.size) return;
+
+		let currentNode = this.head;
+		let prevNode = null;
+		let currentIndex = 0;
+
+		while (currentIndex < index) {
+			prevNode = currentNode;
+			currentNode = currentNode.next;
+			currentIndex++;
+		}
+
+		if (prevNode) prevNode.next = currentNode.next;
+		this.size--;
+	}
+    ```
+    </Fragment>
+    <Fragment slot="go">
+    ```go
+    func (l *LinkedList) removeAt(index uint) {
+        if index >= l.size {
+            return
+        }
+
+        currentNode := l.head
+        var prevNode *ListNode
+        var currentIndex uint
+
+        for currentIndex < index {
+            prevNode = currentNode
+            currentNode = currentNode.next
+            currentIndex++
+        }
+
+        if prevNode != nil {
+            prevNode.next = currentNode.next
+        }
+
+        l.size--
+    }
+    ```
+    </Fragment>
+    <Fragment slot="python">
+    ```python
+    def remove_at(self, index):
+        if index < 0 or index >= self.size:
+            return
+
+        current_node = self.head
+        prev_node = None
+        current_index = 0
+
+        while current_index < index:
+            prev_node = current_node
+            current_node = current_node.next
+            current_index += 1
+
+        if prev_node:
+            prev_node.next = current_node.next
+
+        self.size -= 1
+    ```
+    </Fragment>
+</PackageManagerTabs>
+
+## Method similarity
+
+At this point we have a bit of code repetition given that our methods do very similar things, we can reduce this repetition by adding a new method that returns a list node at a given index, and use that for our `removeAt` and `insertAt` methods, as they both traverse the list in the same way.
+
+<PackageManagerTabs>
+    <Fragment slot="js">
+    ```js
+    getAt(index) {
+		if (index < 0 || index >= this.size) return null;
+		let currentNode = this.head;
+		let currentIndex = 0;
+		while (currentIndex < index) {
+			currentNode = currentNode.next;
+			currentIndex++;
+		}
+
+		return currentNode;
+	}
+    ```
+    </Fragment>
+    <Fragment slot="go">
+    ```go
+    func (l *LinkedList) getAt(index uint) (*ListNode, bool) {
+        if index >= l.size {
+            return nil, false
+        }
+
+        currentNode := l.head
+        var currentIndex uint
+
+        for currentIndex < index {
+            currentNode = currentNode.next
+            currentIndex++
+        }
+
+        return currentNode, true
+    }
+    ```
+    </Fragment>
+    <Fragment slot="python">
+    ```python
+    def get_at(self, index):
+        if index < 0 or index >= self.size:
+            return None
+
+        current_node = self.head
+        current_index = 0
+
+        while current_index < index:
+            current_node = current_node.next
+            current_index += 1
+
+        return current_node
+    ```
+    </Fragment>
+</PackageManagerTabs>
+
+## List implementations
+
+In our implementation, each node only points to the next node in our list, this makes it a "Singly linked list", but we also have other types of linked lists:
+
+* Singly Linked List - The nodes only point to the address of the next node in the list.
+* Doubly Linked List - The nodes point to the addresses of both the *previous* and *next* node.
+* Circular Linked List - The last node in the list will point to the first node in the list. It can either be singly or doubly linked.
